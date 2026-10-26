@@ -1,3 +1,5 @@
+![copertina](.github/copertina.png)
+
 # AI Toner Saver 1.7.1
 
 Pulisce PDF e foto di documenti per stampare in bianco e nero consumando meno toner:
