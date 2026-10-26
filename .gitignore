@@ -1,4 +1,8 @@
 .venv/
+runtime/
 __pycache__/
 *.pyc
 *_PULITO.pdf
+impostazioni.ini
+errori.log
+.*.lock

@@ -1,4 +1,4 @@
-"""AI Toner Saver 1.7 - Windows 11 | Trascina, controlla, stampa."""
+"""AI Toner Saver 1.7.1 - Windows 11 | Trascina, controlla, stampa."""
 import getpass
 import os
 import sys
@@ -27,11 +27,43 @@ import engine
 from engine import (Settings, SourcePage, PageResult, collect_files, iter_pages, process_page, detect_document,
                     compose_sheets, render_sheet, save_pdf_sheets, build_document, LAYOUTS, SUPPORTED, fitz)
 
-APP_NAME = 'AI Toner Saver 1.7'
+VERSION = '1.7.1'
+APP_NAME = 'AI Toner Saver ' + VERSION
+APP_DIR = Path(__file__).resolve().parent
 MODES = ['automatico', 'delicato', 'massimo', 'originale']
 MODE_LABELS = ['Automatico intelligente', 'Delicato (firme/timbri)', 'Massimo risparmio', 'Originale']
-SERVER_NAME = 'AITonerSaver17-' + getpass.getuser()
-LOG_DIR = Path(os.environ.get('LOCALAPPDATA', tempfile.gettempdir())) / 'AITonerSaver'
+
+
+
+def _portable_dir():
+    """Versione portatile (Python dentro la cartella): tutto resta nella cartella, se scrivibile."""
+    if not (APP_DIR / 'runtime' / 'python.exe').exists():
+        return None
+    try:
+        probe = APP_DIR / '.prova_scrittura'
+        probe.write_text('ok')
+        probe.unlink()
+        return APP_DIR
+    except OSError:
+        return None             # cartella in sola lettura: si usa il profilo di Windows
+
+
+PORTABLE_DIR = _portable_dir()
+if PORTABLE_DIR:
+    import hashlib
+    SERVER_NAME = 'AITonerSaver17-' + hashlib.md5(str(APP_DIR).lower().encode()).hexdigest()[:10]
+    LOG_DIR = PORTABLE_DIR
+    LOCK_DIR = PORTABLE_DIR
+else:
+    SERVER_NAME = 'AITonerSaver17-' + getpass.getuser()
+    LOG_DIR = Path(os.environ.get('LOCALAPPDATA', tempfile.gettempdir())) / 'AITonerSaver'
+    LOCK_DIR = Path(tempfile.gettempdir())
+
+
+def make_settings():
+    if PORTABLE_DIR:
+        return QSettings(str(PORTABLE_DIR / 'impostazioni.ini'), QSettings.Format.IniFormat)
+    return QSettings('LocalTools', 'AITonerSaver17')
 
 STYLE = '''
 QMainWindow, QWidget { background: #0f1724; color: #e5ecf7; font-family: 'Segoe UI'; font-size: 10pt; }
@@ -298,7 +330,7 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(APP_NAME)
         self.resize(1400, 880)
         self.setAcceptDrops(True)
-        self.stored = QSettings('LocalTools', 'AITonerSaver17')
+        self.stored = make_settings()
         self.items: dict[int, PageItem] = {}
         self.next_uid = 1
         self.bridge = Bridge()
@@ -338,7 +370,8 @@ class MainWindow(QMainWindow):
         main.setSpacing(9)
 
         head = QHBoxLayout()
-        title = QLabel('AI TONER SAVER <span style="color:#60a5fa">1.7</span>')
+        title = QLabel(f'AI TONER SAVER <span style="color:#60a5fa">{VERSION}</span>'
+                       + (' <span style="color:#86efac;font-size:10pt">portatile</span>' if PORTABLE_DIR else ''))
         title.setStyleSheet('font-size: 17pt; font-weight: 700; color: #f0f6ff;')
         head.addWidget(title)
         sub = QLabel('Trascina qui PDF, foto o intere cartelle: scontorno, pulizia e impaginazione sono automatici.')
@@ -1273,7 +1306,7 @@ def main():
     app.setStyleSheet(STYLE)
     # Un solo programma aperto: i file scelti da Esplora risorse (anche molti insieme) arrivano
     # tutti nella stessa finestra.
-    lock = QLockFile(str(Path(QDir.tempPath()) / (SERVER_NAME + '.lock')))
+    lock = QLockFile(str(LOCK_DIR / ('.' + SERVER_NAME + '.lock')))
     lock.setStaleLockTime(0)
     if not lock.tryLock(150):
         if send_to_running(args, attempts=24):

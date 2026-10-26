@@ -1,4 +1,4 @@
-# AI Toner Saver 1.7
+# AI Toner Saver 1.7.1
 
 Pulisce PDF e foto di documenti per stampare in bianco e nero consumando meno toner:
 toglie il fondo grigio delle foto, scontorna il foglio, raddrizza e impagina in A4.
@@ -11,10 +11,20 @@ automatic page detection and perspective crop, background removal, deskew, A4 la
 (ID cards at real size). Offline, Windows, Python + PySide6. Interface in Italian.*
 
 ## Download e avvio
+Dalla pagina **[Releases](https://github.com/BITNBIT/ai-toner-saver/releases/latest)** scegli:
+
+**Versione portatile (consigliata)** — `AI_Toner_Saver_Portatile_v1.7.1.zip`
+1. Estrai lo zip dove vuoi (anche su una chiavetta USB).
+2. Doppio clic su **AVVIA.bat**. Fatto: Python e librerie sono già dentro, non serve installare nulla
+   né internet.
+
+Vive tutto nella sua cartella: impostazioni (`impostazioni.ini`) ed eventuale registro errori
+restano lì. Per eliminarla basta cancellare la cartella.
+
+**Versione leggera** — `AI_Toner_Saver_v1.7.1.zip` (o pulsante verde **Code ▸ Download ZIP**)
 1. Installa [Python 3.11](https://www.python.org/downloads/) (spunta «Add python.exe to PATH»).
-2. Scarica il progetto: pulsante verde **Code ▸ Download ZIP**, ed estrailo dove vuoi.
-3. Doppio clic su **AVVIA.bat**. La prima volta scarica le librerie (qualche minuto, serve internet),
-   poi si apre subito.
+2. Estrai lo zip e fai doppio clic su **AVVIA.bat**. La prima volta scarica le librerie
+   (qualche minuto, serve internet), poi si apre subito.
 
 ## Novità rispetto alla 1.6
 - **Tanti file insieme**: selezione multipla, intere cartelle, trascinamento nella finestra,
@@ -65,5 +75,8 @@ Ctrl+L / Ctrl+R ruota · Canc togli pagina.
   scaricati: lo scontorno e la pulizia sono algoritmi di visione artificiale.
 - Non alterare dati e dettagli ufficiali dei documenti d'identità; un riflesso sulla foto
   non può essere ricostruito.
-- In caso di errore i dettagli sono in `%LOCALAPPDATA%\AITonerSaver\errori.log`.
+- In caso di errore i dettagli sono in `errori.log` nella cartella (versione portatile) oppure in
+  `%LOCALAPPDATA%\AITonerSaver\errori.log` (versione leggera).
+- L'integrazione con Windows (menu del tasto destro, «Invia a», collegamento sul Desktop) è l'unica
+  cosa che scrive fuori dalla cartella, e solo se lanci CONTEXT_MENU_INSTALLA.bat.
 - Nella stampa scegli A4 e scala 100% nel driver della stampante.

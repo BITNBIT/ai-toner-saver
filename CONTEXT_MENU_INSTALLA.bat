@@ -4,6 +4,9 @@ setlocal
 cd /d "%~dp0"
 call "%~dp0AVVIA.bat" --prepara || exit /b 1
 set "VPYW=%~dp0.venv\Scripts\pythonw.exe"
+if exist "%~dp0runtime\pythonw.exe" set "VPYW=%~dp0runtime\pythonw.exe"
+echo Nota: questa integrazione scrive nel registro di Windows e crea due collegamenti.
+echo Se sposti la cartella, rilancia questo file. Per togliere tutto: CONTEXT_MENU_RIMUOVI.bat
 set "APP=%~dp0app.py"
 set "ICO=%SystemRoot%\System32\imageres.dll,-51"
 
